@@ -316,6 +316,43 @@ void quickSortIterative(vector<int> &arr, int low, int high)
     }
 }
 
+//heapify
+void heapify(vector<int> &arr, int n, int i)
+{
+    int largest = i;
+    int left = 2 * i + 1;
+    int right = 2 * i + 2;
+
+    if (left < n && arr[left] > arr[largest])
+        largest = left;
+
+    if (right < n && arr[right] > arr[largest])
+        largest = right;
+
+    if (largest != i)
+    {
+        swap(arr, i, largest);
+        heapify(arr, n, largest);
+    }
+}
+
+void heapSort(vector<int> &arr, int n)
+{
+    for (int i = n / 2 - 1; i >= 0; i--)
+        heapify(arr, n, i);
+
+    for (int i = n - 1; i > 0; i--)
+    {
+        swap(arr, 0, i);
+        heapify(arr, i, 0);
+    }
+}
+
+void heapSortInitialised(vector<int> &arr, int length) {
+    heapSort(arr, length);
+    return;
+}
+
 void quickSortInitialisedItr(vector<int> &arr, int length)
 {
     quickSortIterative(arr, 0, length - 1);
@@ -336,7 +373,7 @@ int main()
     int min = 1;
     int max = 100000;
 
-    int cases = 50;
+    const int cases = 100;
 
     vector<int> array[cases];
     for (int i = 0; i < cases; i++)
@@ -354,24 +391,35 @@ int main()
         int length = arr.size();
         file << length << " ";
         cout << length << endl;
-        //Iterative Quick Sort
+        // //Iterative Quick Sort
+        // int elapsedtime = 0;
+        // for (int i = 0; i < 10; i++)
+        // {
+        //     vector<int> arrCopy = arr;
+        //     auto start = chrono::high_resolution_clock::now();
+        //     quickSortInitialisedItr(arrCopy, length);
+        //     auto end = chrono::high_resolution_clock::now();
+        //     elapsedtime += chrono::duration_cast<chrono::nanoseconds>(end - start).count();
+        // }
+        // file << elapsedtime / 10 << " ";
+        // //Recursive Quick Sort
+        // int elapsedtime = 0;
+        // for (int i = 0; i < 10; i++)
+        // {
+        //     vector<int> arrCopy = arr;
+        //     auto start = chrono::high_resolution_clock::now();
+        //     quickSortInitialised(arrCopy, length);
+        //     auto end = chrono::high_resolution_clock::now();
+        //     elapsedtime += chrono::duration_cast<chrono::nanoseconds>(end - start).count();
+        // }
+        // file << elapsedtime / 10 << " ";
+        //Heap Sort
         int elapsedtime = 0;
         for (int i = 0; i < 10; i++)
         {
             vector<int> arrCopy = arr;
             auto start = chrono::high_resolution_clock::now();
-            quickSortInitialisedItr(arrCopy, length);
-            auto end = chrono::high_resolution_clock::now();
-            elapsedtime += chrono::duration_cast<chrono::nanoseconds>(end - start).count();
-        }
-        file << elapsedtime / 10 << " ";
-        //Recursive Quick Sort
-        elapsedtime = 0;
-        for (int i = 0; i < 10; i++)
-        {
-            vector<int> arrCopy = arr;
-            auto start = chrono::high_resolution_clock::now();
-            quickSortInitialised(arrCopy, length);
+            heapSortInitialised(arrCopy, length);
             auto end = chrono::high_resolution_clock::now();
             elapsedtime += chrono::duration_cast<chrono::nanoseconds>(end - start).count();
         }
@@ -380,6 +428,5 @@ int main()
         file << endl;
     }
     file.close();
-    system("gnuplot GnuPlotInitFile.gnu");
     return 0;
 }
